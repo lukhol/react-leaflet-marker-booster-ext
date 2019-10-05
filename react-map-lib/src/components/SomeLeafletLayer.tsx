@@ -40,8 +40,8 @@ class SomeLeafletLayerBase extends MapLayer<any, any> {
         // };
         // geojson.features.push(feature);
 
-        const boostType = 'ball';
-        const boostScale = 1.5;
+        const boostType = 'arrow';
+        const boostScale = 1;
         const boostExp = 0.125;
         
         return new LeafletLayerGroup([geoJSON(geojson, {
@@ -61,11 +61,6 @@ class SomeLeafletLayerBase extends MapLayer<any, any> {
                     biDirection: getRandomArbitrary(0,10) > 5,
                     rotated: true
                 });
-                
-
-                // return circleMarker(latlng, {
-                //     radius: 4
-                // });
             }
         })], super.getOptions(props));
     }

@@ -35,39 +35,51 @@
 				if (options.fill) {
 					if(options.stroke && options.weight !== 0)
 						r = r + options.weight * 0.5 * scale;
-					var grd = ctx.createRadialGradient(p.x - r/2, p.y - r/2, 0, p.x, p.y, 1.5 * r);
+					var grd = ctx.createRadialGradient(p.x - r/2, p.y - r/2 - 2*r, 0, p.x, p.y - 2*r, 2.5 * r);
 					grd.addColorStop(0, options.fillColor);
-                    grd.addColorStop(1, options.color);
-
-                    ctx.save();                
-                    const pointX = p.x;
-                    const pointY = p.y;
-
-                    const startFontSize = 20;
-                    const fontSize = startFontSize * scale;
-
-                    ctx.translate(pointX, pointY)
-                    //ctx.rotate(1.57079633 / 2);
-                    ctx.rotate(options.rotateRad);
-                    ctx.translate(-pointX, -pointY);
-
-                    ctx.font = fontSize + "px Arial";
-                    ctx.fontWeight = "bold"
-                    let arrowTxt = options.biDirection ? "↕" : "↑";
-                    if(options.rotated) {
-                        arrowTxt = "↓";
-                    }
-
-                    ctx.fillText(arrowTxt, p.x-(fontSize/2) + 5*scale, p.y+(fontSize/4) - 1*scale);
-                
-                    ctx.restore();
-
+					grd.addColorStop(1, options.color);
 					ctx.beginPath();
 					ctx.fillStyle = grd;
-					//ctx.arc(p.x, p.y,  r, 0, Math.PI * 2, false);
-                    ctx.fill(options.fillRule || 'evenodd');
+					ctx.moveTo(p.x, p.y);
+					ctx.lineTo(p.x - r, p.y-2*r);
+					ctx.lineTo(p.x + r, p.y-2*r);
+					ctx.lineTo(p.x, p.y);
+					ctx.arc(p.x, p.y - 2*r,  r, 0, Math.PI * 2, false);
+					ctx.closePath();
+					ctx.fill(options.fillRule = 'nonzero');
 				}
-				break;
+                break;
+            case 'arrow': {
+                if(options.stroke && options.weight !== 0) {
+                    r = r + options.weight * 0.5 * scale;
+                }
+				
+                ctx.save();                
+                const pointX = p.x;
+                const pointY = p.y;
+
+                const startFontSize = 20;
+                const fontSize = startFontSize * scale;
+
+                ctx.translate(pointX, pointY)
+                ctx.rotate(options.rotateRad);
+                ctx.translate(-pointX, -pointY);
+
+                ctx.font = fontSize + "px Arial";
+                ctx.fontWeight = "bold"
+                let arrowTxt = options.biDirection ? "↕" : "↑";
+                if(options.rotated) {
+                    arrowTxt = "↓";
+                }
+                ctx.fillText(arrowTxt, p.x-(fontSize/2) + 5*scale, p.y+(fontSize/4) - 1*scale);
+            
+                ctx.restore();
+
+                ctx.beginPath();
+                ctx.fillStyle = options.color;
+                ctx.fill(options.fillRule || 'evenodd');
+                break;
+            }
 			case 'balloon':
 				if (options.fill) {
 					if(options.stroke && options.weight !== 0)
