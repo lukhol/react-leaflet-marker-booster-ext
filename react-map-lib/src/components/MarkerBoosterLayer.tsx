@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MapLayer, withLeaflet } from 'react-leaflet';
-import { LayerGroup as LeafletLayerGroup, circle, geoJSON, marker, circleMarker, divIcon, latLng } from 'leaflet';
+import L, { LayerGroup as LeafletLayerGroup, circle, geoJSON, marker, circleMarker, divIcon, latLng } from 'leaflet';
 import '../leaflet-marker-booster';
 import BaseLayer from './BaseLayer';
 
@@ -50,17 +50,12 @@ class MarkerBoosterLayer extends BaseLayer {
         
         return new LeafletLayerGroup([geoJSON(geojson, {
             pointToLayer: (feature, latlng) => {
-                return circleMarker(latlng, {
+                // @ts-ignore
+                return L.fastArrowMarker(latlng, {
                     // @ts-ignore
-                    boostType: boostType,
                     boostScale: boostScale,
                     boostExp: boostExp,
-
-                    fillColor: '#00000000',
-                    fillOpacity: 0,
-                    stroke: true,
                     color: '#f00',
-                    weight: 1,
                     rotateRad: getRandomArbitrary(0, 3.14),
                     biDirection: getRandomArbitrary(0,10) > 5,
                     rotated: true
