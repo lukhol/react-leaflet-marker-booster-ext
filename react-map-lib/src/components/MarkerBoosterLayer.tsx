@@ -2,10 +2,24 @@ import * as React from 'react';
 import { MapLayer, withLeaflet } from 'react-leaflet';
 import { LayerGroup as LeafletLayerGroup, circle, geoJSON, marker, circleMarker, divIcon, latLng } from 'leaflet';
 import '../leaflet-marker-booster';
+import BaseLayer from './BaseLayer';
 
-class SomeLeafletLayerBase extends MapLayer<any, any> {
+function getRandomArbitrary(min: number, max: number) {
+    return Math.random() * (max - min) + min;
+}
+
+// const feature = {
+//     type: 'Feature',
+//     geometry: {
+//         type: 'Point',
+//         coordinates: [-0.09, 51.514]
+//     },
+//     properties: {}
+// };
+// geojson.features.push(feature);
+
+class MarkerBoosterLayer extends BaseLayer { 
     createLeafletElement(props: any){ 
-        //const circleLayer = circle([51.505, -0.09], {radius: 500, color: 'black'});
         const geojson = {
             type: "FeatureCollection", 
             features: []
@@ -30,18 +44,8 @@ class SomeLeafletLayerBase extends MapLayer<any, any> {
             geojson.features.push(feature);
         }
 
-        // const feature = {
-        //     type: 'Feature',
-        //     geometry: {
-        //         type: 'Point',
-        //         coordinates: [-0.09, 51.514]
-        //     },
-        //     properties: {}
-        // };
-        // geojson.features.push(feature);
-
         const boostType = 'arrow';
-        const boostScale = 1;
+        const boostScale = 2;
         const boostExp = 0.125;
         
         return new LeafletLayerGroup([geoJSON(geojson, {
@@ -55,22 +59,15 @@ class SomeLeafletLayerBase extends MapLayer<any, any> {
                     fillColor: '#00000000',
                     fillOpacity: 0,
                     stroke: true,
-                    color: '#000',
+                    color: '#f00',
                     weight: 1,
                     rotateRad: getRandomArbitrary(0, 3.14),
                     biDirection: getRandomArbitrary(0,10) > 5,
                     rotated: true
-                });
+                }).bindPopup("<div>Hello</div>");
             }
         })], super.getOptions(props));
     }
 }
 
-function getRandomArbitrary(min: number, max: number) {
-    return Math.random() * (max - min) + min;
-}
-class SomeLeafletLayer extends SomeLeafletLayerBase { 
-    
-}
-
-export default withLeaflet(SomeLeafletLayer);
+export default withLeaflet(MarkerBoosterLayer);

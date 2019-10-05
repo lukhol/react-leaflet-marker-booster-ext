@@ -66,7 +66,8 @@
                 ctx.translate(-pointX, -pointY);
 
                 ctx.font = fontSize + "px Arial";
-                ctx.fontWeight = "bold"
+                ctx.fontWeight = "900"
+                ctx.fillColor = options.color;
                 let arrowTxt = options.biDirection ? "↕" : "↑";
                 if(options.rotated) {
                     arrowTxt = "↓";
@@ -115,78 +116,78 @@
 		}
 	};
 
-	var xproto = L.CircleMarker.prototype;
-	var xprev = xproto._containsPoint;
-	xproto._containsPoint = function (p) {
-		if (this instanceof L.Circle)
-			return xprev.call(this, p);
+	// var xproto = L.CircleMarker.prototype;
+	// var xprev = xproto._containsPoint;
+	// xproto._containsPoint = function (p) {
+	// 	if (this instanceof L.Circle)
+	// 		return xprev.call(this, p);
 
-		var r = this._radius;
+	// 	var r = this._radius;
 		
-		var options = this.options;
+	// 	var options = this.options;
 		
-		var scale = Math.pow(2, this._map.getZoom()) * 256 / Math.PI / 6378137;
-		scale = Math.pow(scale, options.boostExp) * options.boostScale;
-		r = r * scale;
-		r = r + (this.options.stroke ? this.options.weight * scale / 2 : 0);
+	// 	var scale = Math.pow(2, this._map.getZoom()) * 256 / Math.PI / 6378137;
+	// 	scale = Math.pow(scale, options.boostExp) * options.boostScale;
+	// 	r = r * scale;
+	// 	r = r + (this.options.stroke ? this.options.weight * scale / 2 : 0);
 
-		if(options.boostType === 'balloon')
-			p = new L.Point(p.x, p.y + 2 * r);
+	// 	if(options.boostType === 'balloon')
+	// 		p = new L.Point(p.x, p.y + 2 * r);
 
-		return p.distanceTo(this._point) <= r + this._clickTolerance();		
-		// clickTolerance only for mobile! (seems to be fixed with LL1.4)
-		// return p.distanceTo(this._point) <= r + ((L.Browser.touch && L.Browser.mobile) ? 10 : 0);
-	};
+	// 	return p.distanceTo(this._point) <= r + this._clickTolerance();		
+	// 	// clickTolerance only for mobile! (seems to be fixed with LL1.4)
+	// 	// return p.distanceTo(this._point) <= r + ((L.Browser.touch && L.Browser.mobile) ? 10 : 0);
+	// };
 
-	var cproto = L.Layer.prototype;
-	var cprev = cproto._openPopup;
-	cproto._openPopup = function (e) {
-		var layer = e.layer || e.target;
+	// var cproto = L.Layer.prototype;
+	// var cprev = cproto._openPopup;
+	// cproto._openPopup = function (e) {
+	// 	var layer = e.layer || e.target;
 
-		if (!(layer instanceof L.CircleMarker) || (layer instanceof L.Circle))
-			return cprev.call(this, e);
+	// 	if (!(layer instanceof L.CircleMarker) || (layer instanceof L.Circle))
+	// 		return cprev.call(this, e);
 
-		if (!this._popup) {
-			return;
-		}
+	// 	if (!this._popup) {
+	// 		return;
+	// 	}
 
-		if (!this._map) {
-			return;
-		}
+	// 	if (!this._map) {
+	// 		return;
+	// 	}
 
-		// prevent map click
-		L.DomEvent.stop(e);
+	// 	// prevent map click
+	// 	L.DomEvent.stop(e);
 
-		// treat it like a marker and figure out
-		// if we should toggle it open/closed
-		if (this._map.hasLayer(this._popup) && this._popup._source === layer) {
-			this.closePopup();
-		} else {
-			this.openPopup(layer || e.target, layer._latlng);
-			layer.on('preclick', L.DomEvent.stopPropagation);
-		}
-	};
+	// 	// treat it like a marker and figure out
+	// 	// if we should toggle it open/closed
+	// 	if (this._map.hasLayer(this._popup) && this._popup._source === layer) {
+	// 		this.closePopup();
+	// 	} else {
+	// 		this.openPopup(layer || e.target, layer._latlng);
+	// 		layer.on('preclick', L.DomEvent.stopPropagation);
+	// 	}
+	// };
 
-	var pproto = L.Popup.prototype;
-	var p_getAnchor = pproto._getAnchor;
-	pproto._getAnchor = function () {
-		if (!(this._source instanceof L.CircleMarker) || this._source instanceof L.Circle) 
-			return p_getAnchor.call(this);
+	// var pproto = L.Popup.prototype;
+	// var p_getAnchor = pproto._getAnchor;
+	// pproto._getAnchor = function () {
+	// 	if (!(this._source instanceof L.CircleMarker) || this._source instanceof L.Circle) 
+	// 		return p_getAnchor.call(this);
 
-		var r = this._source._radius;
+	// 	var r = this._source._radius;
 
-		var options = this._source.options;
+	// 	var options = this._source.options;
 
-		var zoomScale;
-		var scale = Math.pow(2, this._map.getZoom()) * 256 / Math.PI / 6378137;
-		scale = Math.pow(scale, options.boostExp) * options.boostScale;
+	// 	var zoomScale;
+	// 	var scale = Math.pow(2, this._map.getZoom()) * 256 / Math.PI / 6378137;
+	// 	scale = Math.pow(scale, options.boostExp) * options.boostScale;
 
-		if(options.boostType === 'balloon')
-			r = 2.5 * r * scale;
-		else
-			r = 0.5 * r * scale;
+	// 	if(options.boostType === 'balloon')
+	// 		r = 2.5 * r * scale;
+	// 	else
+	// 		r = 0.5 * r * scale;
 
-		// Where should we anchor the popup on the source layer?
-		return L.point(this._source && this._source._getPopupAnchor ? this._source._getPopupAnchor() : [0, -r]);
-	};
+	// 	// Where should we anchor the popup on the source layer?
+	// 	return L.point(this._source && this._source._getPopupAnchor ? this._source._getPopupAnchor() : [0, -r]);
+	// };
 })();
