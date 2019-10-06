@@ -1,41 +1,11 @@
 import L, {latLng} from 'leaflet';
 
-L.FastArrowMarker = L.CircleMarker.extend({
-    options: {
-        radius: 10,
-        color: '#f00',
-        boostScale: 1,
-        boostExp: 0.125,
-        rotateRad: 0,
-        biDirection: false,
-        rotated: false
-	},
-    initialize: function (latlng, options) {
-		L.setOptions(this, options);
-		this._latlng = latLng(latlng);
-		this._radius = this.options.radius;
-	},
-});
-
-L.fastArrowMarker = function(latlng, options) {
-    return new L.FastArrowMarker(latlng, options);
-};
-
-// override Leaflet implementation for fast arrow rendering
-(function () {
-	'use strict';
-
-	var proto = L.Canvas.prototype;
-	var prev = proto._updateCircle;
-
-	proto._updateCircle = function (layer) {
-		if (!(layer instanceof L.FastArrowMarker))
-			return prev.call(this, layer);
-
+L.FastArrowMarkerRenderer = L.Canvas.extend({
+    _updateCircle: function (layer) {
 		if (!this._drawing || layer._empty()) {
 			return;
-		}
-
+        }
+        
 		var p = layer._point,
 		    ctx = this._ctx,
 		    r = Math.max(Math.round(layer._radius), 1),
@@ -76,5 +46,31 @@ L.fastArrowMarker = function(latlng, options) {
         ctx.beginPath();
         ctx.fillStyle = options.color;
         ctx.fill(options.fillRule || 'evenodd');
-	};
-})();
+	}
+});
+
+L.fastArrowMarkerRenderer = function() {
+    return new L.FastArrowMarkerRenderer();
+}
+
+L.FastArrowMarker = L.CircleMarker.extend({
+    options: {
+        radius: 10,
+        color: '#f00',
+        boostScale: 1,
+        boostExp: 0.125,
+        rotateRad: 0,
+        biDirection: false,
+        rotated: false,
+        renderer: L.fastArrowMarkerRenderer()
+	},
+    initialize: function (latlng, options) {
+		L.setOptions(this, options);
+		this._latlng = latLng(latlng);
+		this._radius = this.options.radius;
+	},
+});
+
+L.fastArrowMarker = function(latlng, options) {
+    return new L.FastArrowMarker(latlng, options);
+};
